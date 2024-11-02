@@ -19,3 +19,5 @@ for i in range(tensor.shape[0]):
             ax.scatter(i, j, k, c=tensor[i, j, k], cmap='viridis')
 
 plt.show()
+
+
