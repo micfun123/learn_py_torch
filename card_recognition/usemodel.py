@@ -37,46 +37,32 @@ class CardRecognitionCNN(nn.Module):
 
 #use this to load the model
 model = CardRecognitionCNN().to(device)
-model.load_state_dict(torch.load('card_recognition_model.pth'))
+model.load_state_dict(torch.load('model.pth',weights_only=False))
+model.eval()
 
-#use this to predict
-img = Image.open('test.jpg').convert('RGB')
-img = img.resize((224, 224))
-img = np.array(img)
-img = img.astype(np.uint8)
-img = torch.tensor(img, dtype=torch.float32)
-img = img.permute(2, 0, 1)
-img = img.unsqueeze(0)
-img = img.to(device)
-output = model(img)
+#use opencv take a picture when space is pressed and predict the card
+cap = cv2.VideoCapture(0)
+while True:
+    ret, frame = cap.read()
+    cv2.imshow('frame', frame)
+    if cv2.waitKey(1) & 0xFF == ord(' '):
+        cv2.imwrite('temp.jpg', frame)
+        break
+cap.release()
+cv2.destroyAllWindows()
+
+#open the image and predict the card
+image = Image.open('temp.jpg').convert('RGB')
+image = image.resize((224, 224))
+image = np.array(image)
+image = image.astype(np.uint8)
+image = torch.tensor(image, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(device)
+output = model(image)
 _, predicted = torch.max(output, 1)
 print(predicted.item())
 
-#use card.csv to turn the class index into the card name
+#use cards.csv to get the name of the card from class id 
 data = pd.read_csv('cards.csv')
-print(data.loc[data['class index'] == predicted.item()]['card name'].values[0])
+print(data.iloc[predicted.item()]['labels']) 
 
-# while True:
-    # cap = cv2.VideoCapture(0)
-    # while True:
-    #     ret, frame = cap.read()
-    #     if not ret:
-    #         break
-    #     cv2.imshow('frame', frame)
-    #     if cv2.waitKey(1) & 0xFF == ord('q'):
-    #         break
-    #     cv2.imwrite('test.jpg', frame)
-    #     img = Image.open('test.jpg').convert('RGB')
-    #     img = img.resize((224, 224))
-    #     img = np.array(img)
-    #     img = img.astype(np.uint8)
-    #     img = torch.tensor(img, dtype=torch.float32)
-    #     img = img.permute(2, 0, 1)
-    #     img = img.unsqueeze(0)
-    #     img = img.to(device)
-    #     output = model(img)
-    #     _, predicted = torch.max(output, 1)
-    #     print(predicted.item())
-    #     print(data.loc[data['class index'] == predicted.item()]['card name'].values[0])
-    # cap.release()
-    # cv2.destroyAllWindows()
+
