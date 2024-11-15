@@ -60,8 +60,8 @@ transform = transforms.Compose([
 ])
 
 train_dataset = CardsDataSet('cards.csv', transform=transform,is_train=True)
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 print(f"Train Size: {len(train_dataset)}")
+train_loader = DataLoader(train_dataset,batch_size=150, shuffle=True)
 print(f"{train_dataset.data['class index'].unique()}")
 print("I AM HERE")
 
