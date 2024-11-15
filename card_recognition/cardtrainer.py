@@ -11,8 +11,7 @@ from PIL import Image
 import os
 
 
-#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(device)
 
 class CardsDataSet(Dataset):
@@ -77,7 +76,7 @@ class CardRecognitionCNN(nn.Module):
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1 = nn.Linear(16 * 53 * 53, 120)
         self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 52)
+        self.fc3 = nn.Linear(84, 53)
 
     def forward(self, x):
         x = self.pool(torch.relu(self.conv1(x)))
@@ -98,20 +97,16 @@ optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 
 num_epochs = 100
-
+print(f"Training Started on {device}")
 for epoch in range(num_epochs):
     running_loss = 0.0 
     for i, data in enumerate(train_loader, 0):
-        print(type(data['image']), type(data['label']))
         inputs, labels = data['image'], data['label']
         inputs, labels = inputs.to(device), labels.to(device)
 
         
         optimizer.zero_grad()
         outputs = model(inputs.float())
-        
-        # Compute the loss
-        print(len(outputs), len(labels))
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
