@@ -119,6 +119,7 @@ class index,filepaths,labels,card type,data set
 0,train/ace of clubs/118.jpg,ace of clubs,ace,train
 0,train/ace of clubs/119.jpg,ace of clubs,ace,train
 0,train/ace of clubs/120.jpg,ace of clubs,ace,train
+0,train/ace of clubs/121.jpg,ace of clubs,ace,train
 1,train/ace of diamonds/001.jpg,ace of diamonds,ace,train
 1,train/ace of diamonds/002.jpg,ace of diamonds,ace,train
 1,train/ace of diamonds/003.jpg,ace of diamonds,ace,train
@@ -419,6 +420,7 @@ class index,filepaths,labels,card type,data set
 2,train/ace of hearts/169.jpg,ace of hearts,ace,train
 2,train/ace of hearts/170.jpg,ace of hearts,ace,train
 2,train/ace of hearts/171.jpg,ace of hearts,ace,train
+2,train/ace of hearts/172.jpg,ace of hearts,ace,train
 3,train/ace of spades/001.jpg,ace of spades,ace,train
 3,train/ace of spades/002.jpg,ace of spades,ace,train
 3,train/ace of spades/003.jpg,ace of spades,ace,train
@@ -6795,6 +6797,7 @@ class index,filepaths,labels,card type,data set
 46,train/three of diamonds/151.jpg,three of diamonds,three,train
 46,train/three of diamonds/152.jpg,three of diamonds,three,train
 46,train/three of diamonds/153.jpg,three of diamonds,three,train
+46,train/three of diamonds/154.jpg,three of diamonds,three,train
 47,train/three of hearts/001.jpg,three of hearts,three,train
 47,train/three of hearts/002.jpg,three of hearts,three,train
 47,train/three of hearts/003.jpg,three of hearts,three,train
@@ -7313,6 +7316,7 @@ class index,filepaths,labels,card type,data set
 50,train/two of diamonds/131.jpg,two of diamonds,two,train
 50,train/two of diamonds/132.jpg,two of diamonds,two,train
 50,train/two of diamonds/133.jpg,two of diamonds,two,train
+50,train/two of diamonds/134.jpg,two of diamonds,two,train
 51,train/two of hearts/001.jpg,two of hearts,two,train
 51,train/two of hearts/002.jpg,two of hearts,two,train
 51,train/two of hearts/003.jpg,two of hearts,two,train

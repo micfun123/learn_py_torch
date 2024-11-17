@@ -12,7 +12,6 @@ import os
 import cv2
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(device)
 
 
 class CardRecognitionCNN(nn.Module):
@@ -59,10 +58,5 @@ image = image.astype(np.uint8)
 image = torch.tensor(image, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(device)
 output = model(image)
 _, predicted = torch.max(output, 1)
-print(predicted.item())
-
-#use cards.csv to get the name of the card from class id 
-data = pd.read_csv('cards.csv')
-print(data.iloc[predicted.item()]['labels']) 
-
+print(f"Card ID {predicted.item()}")
 
