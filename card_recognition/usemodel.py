@@ -13,7 +13,6 @@ import cv2
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-
 class CardRecognitionCNN(nn.Module):
     def __init__(self):
         super(CardRecognitionCNN, self).__init__()
@@ -23,20 +22,46 @@ class CardRecognitionCNN(nn.Module):
         self.fc1 = nn.Linear(16 * 53 * 53, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 53)
+        self.fc4 = nn.Linear(53, 53)
+        self.fc5 = nn.Linear(53, 53)
+        self.dropout = nn.Dropout(0.5)
 
     def forward(self, x):
-        x = self.pool(torch.relu(self.conv1(x)))
-        x = self.pool(torch.relu(self.conv2(x)))
+        # Convolutional layers
+        x = self.conv1(x)
+        x = torch.relu(x)
+        x = self.pool(x)
+
+
+        x = self.conv2(x)
+        x = torch.relu(x)
+        x = self.pool(x)
+
+        # Flatten the output
         x = x.view(-1, 16 * 53 * 53)
-        x = torch.relu(self.fc1(x))
-        x = torch.relu(self.fc2(x))
+
+        # Fully connected layers
+        x = self.fc1(x)
+        x = torch.relu(x)
+
+        x = self.fc2(x)
+        x = torch.relu(x)
+
         x = self.fc3(x)
+        x = torch.relu(x)
+
+        x = self.fc4(x)
+        x = torch.relu(x)
+        x = self.dropout(x)
+
+
+        x = self.fc5(x)
         return x
 
 
 #use this to load the model
 model = CardRecognitionCNN().to(device)
-model.load_state_dict(torch.load('model.pth',weights_only=False))
+model.load_state_dict(torch.load('model_old3.pth',weights_only=False))
 model.eval()
 
 #use opencv take a picture when space is pressed and predict the card
@@ -58,5 +83,5 @@ image = image.astype(np.uint8)
 image = torch.tensor(image, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(device)
 output = model(image)
 _, predicted = torch.max(output, 1)
-print(f"Card ID {predicted.item()}")
+print(f"Card ID {predicted.item()} with a probability of {torch.nn.functional.softmax(output, dim=1)[0][predicted].item()}")
 
