@@ -42,14 +42,16 @@ model = CardRecognitionCNN().to(device)
 model.load_state_dict(torch.load('card_recognition/model.pth',weights_only=False))
 model.eval()
 
-
-#open the image and predict the card
-image = Image.open('card_recognition/temp.jpg').convert('RGB')
-image = image.resize((224, 224))
-image = np.array(image)
-image = image.astype(np.uint8)
-image = torch.tensor(image, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(device)
-output = model(image)
-_, predicted = torch.max(output, 1)
-print(f"Card ID {predicted.item()} with a probability of {torch.nn.functional.softmax(output, dim=1)[0][predicted].item()}")
+def predict_image(image_path):
+    image = Image.open(image_path)
+    image = image.resize((300, 300))
+    image = np.array(image)
+    image = image / 255.0
+    image = torch.tensor(image, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(device)
+    with torch.no_grad():
+        output = model(image)
+        _, predicted = torch.max(output, 1)
+        return predicted.item()
+    
+print(predict_image('card_recognition/test/ace of clubs/2.jpg'))
 
