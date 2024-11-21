@@ -14,7 +14,7 @@ import cv2
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class CardRecognitionCNN(nn.Module):
-    def __init__(self,num_classes=53):
+    def __init__(self, num_classes=53):
         super(CardRecognitionCNN, self).__init__()
         self.conv1 = nn.Conv2d(3, 32, 5)
         self.bn1 = nn.BatchNorm2d(32)
@@ -23,9 +23,13 @@ class CardRecognitionCNN(nn.Module):
         self.pool = nn.MaxPool2d(2, 2)
         self.dropout = nn.Dropout(0.5)
 
-        # Global Average Pooling
-        self.fc1 = nn.Linear(64, 128)
-        self.fc2 = nn.Linear(128, num_classes)
+        # Global Average Pooling 3 of these
+        self.fc1 = nn.Linear(64, 100)
+        self.fc2 = nn.Linear(100, 128)
+        self.fc3 = nn.Linear(128, num_classes)
+
+
+
 
     def forward(self, x):
         x = self.pool(torch.relu(self.bn1(self.conv1(x))))
@@ -34,8 +38,8 @@ class CardRecognitionCNN(nn.Module):
         x = torch.relu(self.fc1(x))
         x = self.dropout(x)
         x = self.fc2(x)
+        x = self.fc3(x)
         return x
-
 
 #use this to load the model
 model = CardRecognitionCNN().to(device)
