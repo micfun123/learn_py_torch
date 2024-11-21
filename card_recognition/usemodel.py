@@ -14,69 +14,37 @@ import cv2
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class CardRecognitionCNN(nn.Module):
-    def __init__(self):
+    def __init__(self,num_classes=53):
         super(CardRecognitionCNN, self).__init__()
-        self.conv1 = nn.Conv2d(3, 6, 5)
+        self.conv1 = nn.Conv2d(3, 32, 5)
+        self.bn1 = nn.BatchNorm2d(32)
+        self.conv2 = nn.Conv2d(32, 64, 5)
+        self.bn2 = nn.BatchNorm2d(64)
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 53 * 53, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 53)
-        self.fc4 = nn.Linear(53, 53)
-        self.fc5 = nn.Linear(53, 53)
         self.dropout = nn.Dropout(0.5)
 
+        # Global Average Pooling
+        self.fc1 = nn.Linear(64, 128)
+        self.fc2 = nn.Linear(128, num_classes)
+
     def forward(self, x):
-        # Convolutional layers
-        x = self.conv1(x)
-        x = torch.relu(x)
-        x = self.pool(x)
-
-
-        x = self.conv2(x)
-        x = torch.relu(x)
-        x = self.pool(x)
-
-        # Flatten the output
-        x = x.view(-1, 16 * 53 * 53)
-
-        # Fully connected layers
-        x = self.fc1(x)
-        x = torch.relu(x)
-
-        x = self.fc2(x)
-        x = torch.relu(x)
-
-        x = self.fc3(x)
-        x = torch.relu(x)
-
-        x = self.fc4(x)
-        x = torch.relu(x)
+        x = self.pool(torch.relu(self.bn1(self.conv1(x))))
+        x = self.pool(torch.relu(self.bn2(self.conv2(x))))
+        x = torch.mean(x, dim=[2, 3])  # Global Average Pooling
+        x = torch.relu(self.fc1(x))
         x = self.dropout(x)
-
-
-        x = self.fc5(x)
+        x = self.fc2(x)
         return x
 
 
 #use this to load the model
 model = CardRecognitionCNN().to(device)
-model.load_state_dict(torch.load('model_old3.pth',weights_only=False))
+model.load_state_dict(torch.load('card_recognition/model.pth',weights_only=False))
 model.eval()
 
-#use opencv take a picture when space is pressed and predict the card
-cap = cv2.VideoCapture(0)
-while True:
-    ret, frame = cap.read()
-    cv2.imshow('frame', frame)
-    if cv2.waitKey(1) & 0xFF == ord(' '):
-        cv2.imwrite('temp.jpg', frame)
-        break
-cap.release()
-cv2.destroyAllWindows()
 
 #open the image and predict the card
-image = Image.open('temp.jpg').convert('RGB')
+image = Image.open('card_recognition/temp.jpg').convert('RGB')
 image = image.resize((224, 224))
 image = np.array(image)
 image = image.astype(np.uint8)
