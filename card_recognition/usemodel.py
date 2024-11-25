@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader , Dataset
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from PIL import Image
+from PIL import Image ,ImageFilter
 import os
 import cv2
 
@@ -48,7 +48,10 @@ model.eval()
 
 def predict_image(image_path):
     image = Image.open(image_path)
+    image = image.filter(ImageFilter.FIND_EDGES)
     image = image.resize((300, 300))
+    plt.imshow(image)
+    plt.show()
     image = np.array(image)
     image = image / 255.0
     image = torch.tensor(image, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(device)
