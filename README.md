@@ -6,7 +6,7 @@ A repository of PyTorch models created as part of my learning process. Each fold
 
 1. **Clone the repository**:
    ```bash
-   git clone [https://github.com/micfun123/learn_py_torch.git](https://github.com/micfun123/learn_py_torch)
+   git clone https://github.com/micfun123/learn_py_torch.git
    cd learn_py_torch
    ```
 
